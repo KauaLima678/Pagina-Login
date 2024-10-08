@@ -1,8 +1,9 @@
 <?php
 
-if(isset($_SESSION['usuario_id'])){
+session_start();
+if(!isset($_SESSION['usuario_id'])){
 
-  header("location: dashboard.php");
+  header("location: index.php");
   exit();
 
 }
@@ -15,35 +16,35 @@ $mensagem_erro = "";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
   $nome = $_POST['nome'];
-  $email = $_POST['email'];
-  $senha = password_hash($_POST['senha'], PASSWORD_DEFAULT);
+  $descricao = $_POST['descricao'];
+  $quantidade = intval($_POST['quantidade']);
 
 
-  $sql_verifica = "SELECT * FROM usuarios WHERE email = ?";
+  $sql_verifica = "SELECT * FROM produtos WHERE nome = ?";
   $stmt_verifica = $conn->prepare($sql_verifica);
-  $stmt_verifica->bind_param('s', $email);
+  $stmt_verifica->bind_param('s', $nome);
   $stmt_verifica->execute();
   $resultado = $stmt_verifica->get_result();
 
 
   if ($resultado->num_rows > 0) {
-    $mensagem_erro = "Este email ja esta cadastrado.";
+    $mensagem_erro = "Este Produto ja esta cadastrado.";
   } else {
-    $sql = "INSERT INTO usuarios (nome, email, senha) Values (?,?,?)";
+    $sql = "INSERT INTO produtos (nome, descricao, quantidade) Values (?,?,?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param('sss', $nome, $email, $senha);
+    $stmt->bind_param('ssi', $nome, $descricao, $quantidade);
 
 
     if ($stmt->execute()) {
       $_SESSION['mensagem_sucesso'] = "Cadastro realizado com sucesso";
-      header("Location: cadastro.php");
+      header("Location: cadastro-produtos.php");
       exit();
     } else {
       $mensagem_erro = "Erro ao cadastrar" . $conn->error;
     }
   }
 
-  // $stmt->close();
+  $stmt->close();
   $conn->close();
 
 }
@@ -60,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cadastro</title>
-  <link rel="stylesheet" href="./css/index.css">
+  <link rel="stylesheet" href="./css/cadastro-produtos.css">
 </head>
 
 
@@ -68,10 +69,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   <section class="login">
   <div>
     <form action="" method="POST">
-      <h2>Cadastro de <br>usuarios</h2>
+      <h2>Cadastro de <br>Produtos</h2>
+      <label for="nome">Nome</label>
       <input type="text" id="nome" name="nome"  placeholder="Digite seu Nome" required><br>
-      <input type="text" id="email" name="email" placeholder="Digite seu email" required><br>
-      <input type="password" id="senha" name="senha"  placeholder="Digite sua senha" required><br>
+      <label for="descricao">Descrição</label>
+      <input type="text" id="descricao" name="descricao" placeholder="Descreva seu produto" required><br>
+      <label for="quantidade">Quantidade</label>
+      <input type="number" id="quantidade" name="quantidade" required><br>
 
       
       <?php
@@ -85,7 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       <?php endif; ?>
 
       <input type="submit" value="Cadastrar" class="button">
-      <p>Ja tem conta ? <br><a class="cadastro" href="index.php">Ir para login</a></p>
+      <a href="dashboard.php">Ir para DashBoard</a>
     </form>
   </div>
   </section>
