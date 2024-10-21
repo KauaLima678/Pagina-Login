@@ -32,7 +32,11 @@ $resultado = $conn->query($sql);
 </head>
 
 <body>
-
+<header>
+  <a href="cadastro-produtos.php">Cadastrar Produto</a>
+    <a href="?logout=true">Sair</a>
+  </header>
+  
 <main>
   <?php if ($resultado->num_rows > 0) : ?>
     <?php while ($produto = $resultado->fetch_assoc()) : ?>
@@ -41,8 +45,8 @@ $resultado = $conn->query($sql);
         <h3> Descrição: <?php echo $produto['descricao'] ?> </h3>
         <h3> Quantidade: <?php echo $produto['quantidade'] ?> </h3>
         <div class="buttons">
-          <button>Editar</button>
-          <button>Excluir</button>
+         <a href="excluir-produto.php?id=<?php echo $produto['id'] ?>">Excluir</a>
+         <a href="editar-produto.php?id=<?php echo $produto['id'] ?>">Editar</a>
         </div>
       </div>
     <?php endwhile ?>
@@ -52,10 +56,7 @@ $resultado = $conn->query($sql);
     <?php $conn->close(); ?>
 </main>
 
-<header>
-    <a href="?logout=true">Sair</a>
-    <a href="cadastro-produtos.php">Cadastrar Produto</a>
-  </header>
+
 </body>
 
 </html>
