@@ -10,7 +10,7 @@ require_once 'includes/config.php';
 
 $mensagem_sucesso = "";
 $mensagem_erro = "";
-$produto = null;
+$produto = null; 
 
 if (isset($_GET['id'])) {
     $id = intval($_GET['id']);
@@ -59,6 +59,7 @@ $conn->close();
 <body>
 <section class="login">
     <div>
+        
         <form action="" method="POST">
             <h2>Editar produto</h2>
             <input type="text" id="nome" name="nome" value="<?php echo $produto['nome'] ?? '' ?>" required><br>
